@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+  # ------------------------
+  # MongoDB
+  # ------------------------
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  # ------------------------
+  # Mongo Express (Browser UI)
+  # ------------------------
+  mongo-express:
+    image: mongo-express:1.0.2
+    container_name: mongo_express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/mediaprodb
+      ME_CONFIG_BASICAUTH: "false"
+    depends_on:
+      - mongodb
+
+  # ------------------------
+  # MinIO (ImageKit-like storage)
+  # ------------------------
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    restart: always
+    ports:
+      - "9000:9000" # S3 API
+      - "9001:9001" # MinIO Console (Browser UI)
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: admin123
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ":9001"
+
+  mc:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: /bin/sh
+    tty: true
+
+volumes:
+  mongo-data:
+    driver: local
+  minio-data:
+    driver: local
