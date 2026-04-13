@@ -1,3 +1,4 @@
+const albumModel = require("../models/album.model");
 const Album = require("../models/album.model");
 const Music = require("../models/music.model");
 const { uploadFile } = require("../services/storage.service");
@@ -162,4 +163,20 @@ async function createAlbum(req, res) {
   }
 }
 
-module.exports = { createAlbumFromIds, createAlbum };
+async function getAllAlbums(req, res) {
+  try {
+    const albums = await albumModel.find().populate("artist", "username email").populate("musics");
+    return res.status(200).json({
+      message: "Album list retrieved successfully",
+      count: albums.length,
+      albums: albums,
+    })
+  } catch (error) {
+    console.error("Get All Albums Error:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+}
+module.exports = { createAlbumFromIds, createAlbum, getAllAlbums  };

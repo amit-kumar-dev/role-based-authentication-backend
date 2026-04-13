@@ -29,4 +29,32 @@ async function authArtist(req, res, next) {
   }
 }
 
-module.exports = { authArtist };
+async function authUser(req, res, next) {
+  const token = req.cookies?.token;
+
+  if (!token) {
+    return res.status(401).json({
+      message: "Unauthorized: Token missing",
+    });
+  }
+
+  /* -------------------- 2. Verify JWT -------------------- */
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (decoded.role !== "user") {
+      return res.status(403).json({
+        message: "Forbidden: you do not have permission to access",
+      });
+    }
+
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({
+      message: "Unauthorized: Invalid token",
+    });
+  }
+}
+
+module.exports = { authArtist, authUser };

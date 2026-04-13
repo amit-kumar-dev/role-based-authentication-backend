@@ -6,15 +6,7 @@ const authMiddleware = require("../middlewares/auth.middleware");
 
 const router = express.Router();
 
-/**
- * ✅ JSON ONLY
- * Create album from already uploaded music IDs
- */
-router.post(
-  "/album",
-  authMiddleware.authArtist,
-  albumController.createAlbumFromIds,
-);
+
 
 /**
  * ✅ Upload single music
@@ -27,14 +19,44 @@ router.post(
 );
 
 /**
+ * ✅ Get All music
+ */
+router.get(
+  "/all",
+  authMiddleware.authUser,
+  musicController.getAllMusic,
+);
+
+/**
+ * ✅ JSON ONLY
+ * Create album from already uploaded music IDs
+ */
+router.post(
+  "/album",
+  authMiddleware.authArtist,
+  albumController.createAlbumFromIds,
+);
+
+
+/**
  * ✅ multipart/form-data
  * Create album + upload multiple tracks
  */
 router.post(
-  "/album/upload",
+  "/al-upload",
   authMiddleware.authArtist,
   upload.array("album", 20),
   albumController.createAlbum,
+);
+
+/**
+ * ✅ multipart/form-data
+ * Create album + upload multiple tracks
+ */
+router.get(
+  "/all-albums",
+  authMiddleware.authUser,
+  albumController.getAllAlbums,
 );
 
 module.exports = router;

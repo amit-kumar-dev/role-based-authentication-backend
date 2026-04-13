@@ -84,4 +84,23 @@ async function createMusic(req, res) {
   }
 }
 
-module.exports = { createMusic };
+
+async function getAllMusic(req, res) {
+  try {
+    const musicList = await musicModel.find().populate("artist", "username");
+    return res.status(200).json({
+      message: "Music list retrieved successfully",
+      music: musicList,
+    });
+  } catch (error) {
+    console.error("Get All Music Error:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+}
+
+
+
+module.exports = { createMusic, getAllMusic };

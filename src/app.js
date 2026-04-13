@@ -3,6 +3,7 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth.route");
 const musicRoutes = require("./routes/music.route");
 
+
 const app = express();
 app.use(cookieParser());
 app.use(express.json()); //midleware
