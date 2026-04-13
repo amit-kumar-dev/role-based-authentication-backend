@@ -1,0 +1,10 @@
+Set-Content .gitignore @"
+node_modules/
+.env
+.env.local
+mongo-data/
+minio-data/
+.docker/
+npm-debug.log*
+.vscode/
+"@
